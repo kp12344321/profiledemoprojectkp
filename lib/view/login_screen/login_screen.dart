@@ -17,6 +17,13 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   LoginController loginController = Get.find();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,17 +139,23 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 MyButton(
                   onTap: () async {
+                    print(
+                        'editedEmail ${loginController.editedEmail} >> ${loginController.emailTextEditingController.text}');
                     if (loginController.formKey.currentState!.validate()) {
                       loginController.formKey.currentState?.save();
-                      if (loginController.loginResponse.email != '' &&
-                          loginController.loginResponse.password != '') {
-                        if (loginController.loginResponse.email ==
+                      if (loginController.value.value == true) {
+                        print('check>>>>');
+                        if (loginController.editedEmail ==
                                 loginController
                                     .emailTextEditingController.text &&
                             loginController.loginResponse.password ==
                                 loginController
                                     .passwordTextEditingController.text) {
-                          Get.offAllNamed(AppRoutes.home);
+                          print('check>>>>123');
+                          await loginController.saveData();
+                          Get.offAllNamed(AppRoutes.home,
+                              arguments: loginController
+                                  .emailTextEditingController.text);
                         } else {
                           Get.snackbar(
                             "Error",
@@ -150,10 +163,19 @@ class _LoginScreenState extends State<LoginScreen> {
                           );
                         }
                       } else {
-                        if (loginController.value.value == true) {
-                          await loginController.saveData();
+                        print('check>>>>102');
+                        await loginController.saveData();
+                        if (loginController.editedEmail ==
+                            loginController.emailTextEditingController.text) {
+                          Get.offAllNamed(AppRoutes.home,
+                              arguments: loginController
+                                  .emailTextEditingController.text);
+                        } else {
+                          Get.snackbar(
+                            "Error",
+                            'Invalid Email or Password',
+                          );
                         }
-                        Get.offAllNamed(AppRoutes.home);
                       }
                     }
                   },

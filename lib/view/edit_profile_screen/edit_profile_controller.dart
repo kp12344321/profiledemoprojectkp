@@ -49,7 +49,11 @@ class EditProfileController extends GetxController {
         image: profileImg.value);
     print('check image ${profileImg.value}');
     await SessionManager.saveUserDetails(response).then((value) {
-      Get.offNamed(AppRoutes.home);
+      Get.snackbar(
+        "Success",
+        'Profile Updated Successfully',
+      );
+      Get.offNamed(AppRoutes.home, arguments: 1);
     });
   }
 }

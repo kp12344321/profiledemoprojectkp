@@ -11,10 +11,10 @@ class LoginController extends GetxController {
   final formKey = GlobalKey<FormState>();
 
   LoginModel loginResponse = LoginModel();
+  String editedEmail = '';
 
   @override
   void onInit() {
-    // TODO: implement onInit
     getLoginResponse();
     super.onInit();
   }
@@ -28,16 +28,24 @@ class LoginController extends GetxController {
             LoginModel(email: '', password: '', rememberMe: 'false');
       }
     });
-    emailTextEditingController.text = loginResponse.email ?? '';
     passwordTextEditingController.text = loginResponse.password ?? '';
     value.value = loginResponse.rememberMe == 'true';
+    await SessionManager.getUserDetails().then((user) {
+      print('user: ${user!.email}');
+      editedEmail = user.email ?? '';
+      emailTextEditingController.text =
+          loginResponse.rememberMe == 'true' ? user.email ?? '' : '';
+    });
   }
 
   Future saveData() async {
+    print('value: herer $value');
     var response = LoginModel(
-        email: emailTextEditingController.text,
-        password: passwordTextEditingController.text,
-        rememberMe: value.value.toString());
+        email: value.value == true
+            ? emailTextEditingController.text
+            : emailTextEditingController.text,
+        password: value.value == true ? passwordTextEditingController.text : '',
+        rememberMe: value.value == true ? value.value.toString() : 'false');
     await SessionManager.setLoginResponse(response);
   }
 }
